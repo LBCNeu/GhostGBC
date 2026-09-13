@@ -67,3 +67,17 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# STM32/embedded
+*.elf
+*.bin
+*.hex
+*.map
+
+# ROMs - don't commit copyrighted game files
+roms/*.gb
+roms/*.gbc
+
+# Editor
+.vscode/
+*.user
