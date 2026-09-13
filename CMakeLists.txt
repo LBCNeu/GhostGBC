@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(GhostGBC)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(SDL2 REQUIRED)
 
 add_executable(GhostGBC
@@ -11,5 +14,5 @@ add_executable(GhostGBC
     platform/pc/main_sdl.cpp
 )
 
-target_link_libraries(GhostGBC PRIVATE SDL2::SDL2 SDL2::SDL2main)
-target_include_directories(GhostGBC PRIVATE core/)
+target_link_libraries(GhostGBC PRIVATE SDL2::SDL2main SDL2::SDL2)
+target_include_directories(GhostGBC PRIVATE core/headers)
