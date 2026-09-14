@@ -10,3 +10,4 @@ https://pastraiser.com/cpu/gameboy/gameboy_opcodes.html
 
 ## Pan Docs
 https://gbdev.io/pandocs/Specifications.html
+https://gbdev.io/pandocs/Power_Up_Sequence.html

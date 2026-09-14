@@ -57,8 +57,8 @@ struct cpu
 
         if (set) // if set == 1 then it sets the Bit of the Flag to 1
         {
-            F = F | mask;   // turn only Bit 7 to 1, all other bits stay the same
-                            // F (eg. 0110 1000) gets linked with | (OR) to the Mask (1000 0000) -> Resulting F is 1110 1000 (The 7th Bit, the one on the far right, got set to 1)
+            F = F | mask; // turn only Bit 7 to 1, all other bits stay the same
+                          // F (eg. 0110 1000) gets linked with | (OR) to the Mask (1000 0000) -> Resulting F is 1110 1000 (The 7th Bit, the one on the far right, got set to 1)
         }
         else // else it sets the Bit of the Flag to 0
         {
