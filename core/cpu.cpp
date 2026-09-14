@@ -37,13 +37,37 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-    case 0x0E: // LD B, u8... Load unsigned 8-bit int into B-Reg
+    case 0x0E: // LD C, u8... Load unsigned 8-bit int into C-Reg
         C = memory[PC];
         PC++;
         lastCycles = 8;
         break;
 
-    case 0x16: // LD B, u8... Load unsigned 8-bit int into B-Reg
+    case 0x16: // LD D, u8... Load unsigned 8-bit int into D-Reg
+        D = memory[PC];
+        PC++;
+        lastCycles = 8;
+        break;
+
+    case 0x1E: // LD E, u8... Load unsigned 8-bit int into E-Reg
+        E = memory[PC];
+        PC++;
+        lastCycles = 8;
+        break;
+
+    case 0x26: // LD H, u8... Load unsigned 8-bit int into H-Reg
+        H = memory[PC];
+        PC++;
+        lastCycles = 8;
+        break;
+
+    case 0x2E: // LD L, u8... Load unsigned 8-bit int into L-Reg
+        L = memory[PC];
+        PC++;
+        lastCycles = 8;
+        break;
+
+    case 0x3E: // LD A, u8... Load unsigned 8-bit int into A-Reg
         D = memory[PC];
         PC++;
         lastCycles = 8;
