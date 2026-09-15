@@ -34,7 +34,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- LD Reg, u8 ----------------
 
-    case 0x06: // LD B, u8... Load unsigned 8-bit int into B-Reg
+    case 0x06: // LD B, u8... Load unsigned 8-bit int into B Reg
         B = memory[PC];
         PC++;
         lastCycles = 8;
@@ -78,20 +78,20 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- LD Reg, u16 ----------------
 
-    case 0xFA:
-    { // LD A, u16
-        // TODO
-        uint16_t addr = memory[PC];
-        PC++;
-        addr = addr | (memory[PC] << 8);
-        A = memory[addr];
+    case 0xFA:                           // LD A, u16 Value at the 16bit Adress gets loaded into A Reg
+    {                                    // In Memory: [Opcode 0xFA] [Low Byte] [High Byte]
+        uint16_t addr = memory[PC];      // Low Byte -> addr
+        PC++;                            // PC shifted to High Byte
+        addr = addr | (memory[PC] << 8); // High byte gets shifted left and then merged with Low Byte (in addr)
+        // Before: [Low Byte] [High Byte] -> After shift + merge -> 0x[High Byte] [Low Byte]
+        A = memory[addr]; // Value at addr into A Reg
         PC++;
         lastCycles = 16;
         break;
     }
         // ------------- LD Reg -> Reg ----------------
 
-    case 0x78: // LD A, B... Load unsigned B-Reg data int into A-Reg
+    case 0x78: // LD A, B... Load unsigned B Reg data int into A Reg
         A = B;
         lastCycles = 4;
         break;
@@ -172,7 +172,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- INC ----------------
 
-    case 0x3C: // INC A Increase Value of A-Reg by 1
+    case 0x3C: // INC A Increase Value of A Reg by 1
         A++;
         setZeroFlag(A == 0); // Only set ZeroFlag if Result is Zero
         setSubFlag(false);
@@ -183,7 +183,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- DEC ----------------
 
-    case 0x3D: // DEC A Decrease Value of A-Reg by 1
+    case 0x3D: // DEC A Decrease Value of A Reg by 1
         A--;
         setZeroFlag(A == 0); // Only set ZeroFlag if Result is Zero
         setSubFlag(true);
@@ -191,6 +191,52 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         // DEC does not touch the Carry Flag!!!
         lastCycles = 4;
         break;
+
+        // ------------- ADD ----------------
+
+    case 0xC6: // ADD A,u8 Adds u8 to A Reg
+        setHalfFlag(((A & 0x0F) + (memory[PC] & 0x0F)) > 0x0F);
+        setCarryFlag((A + memory[PC]) > 0xFF);
+        A = A + memory[PC];
+        setZeroFlag(A == 0);
+        setSubFlag(false);
+        PC++;
+        lastCycles = 8;
+        break;
+
+        // ---------- ADD rr, rr----------------
+
+    case 0x09: // ADD HL,BC Adds BC to HL
+    {
+        setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
+        setCarryFlag((getHL() + getBC()) > 0xFFFF);
+        setHL(getHL() + getBC());
+        setSubFlag(false);
+        lastCycles = 8;
+        break;
+    }
+
+        // ------------- DAA ----------------
+
+    // case 0x27: // DAA Corrects Additions to be correct in BCD Format instead of Binary / Hex. Unlinke the Intel 8080 the Sharp LR35 (GB CPU) can Correct both additions and subtractions with DAA
+    // {
+    //     uint8_t correction = 0; // TODO
+
+    //     if (!getSubFlag())
+    //     {
+    //         if (condition)
+    //         {
+    //             /* code */
+    //         }
+            
+    //     }
+        
+    //     setHalfFlag(false);
+    //     setCarryFlag(A);
+    //     setZeroFlag(A == 0);
+    //     lastCycles = 4;
+    //     break;
+    // }
 
     default:
         lastCycles = 4; // TODO... just for testing, not legit GB behaviour
