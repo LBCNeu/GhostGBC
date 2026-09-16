@@ -204,7 +204,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-        // ---------- ADD rr, rr----------------
+        // ---------- ADD rr, rr ----------------
 
     case 0x09: // ADD HL,BC Adds BC to HL
     {
@@ -216,27 +216,59 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- DAA ----------------
+        // ---------- ADD rr,i8 ---------------- TODO
 
-    // case 0x27: // DAA Corrects Additions to be correct in BCD Format instead of Binary / Hex. Unlinke the Intel 8080 the Sharp LR35 (GB CPU) can Correct both additions and subtractions with DAA
+    // case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8
     // {
-    //     uint8_t correction = 0; // TODO
-
-    //     if (!getSubFlag())
-    //     {
-    //         if (condition)
-    //         {
-    //             /* code */
-    //         }
-            
-    //     }
-        
-    //     setHalfFlag(false);
-    //     setCarryFlag(A);
-    //     setZeroFlag(A == 0);
-    //     lastCycles = 4;
+    //     setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
+    //     setCarryFlag((getHL() + getBC()) > 0xFFFF);
+    //     setHL(getHL() + getBC());
+    //     setSubFlag(false);
+    //     setZeroFlag(false);
+    //     PC++;
+    //     lastCycles = 16;
     //     break;
     // }
+
+        // ------------- DAA ----------------
+
+    case 0x27:                  // DAA Corrects Additions to be correct in BCD Format instead of Binary / Hex. Unlinke the Intel 8080 the Sharp LR35 (GB CPU) can Correct both additions and subtractions with DAA
+    {                           // Based on documentation on https://blog.ollien.com/posts/gb-daa/
+        uint8_t correction = 0;
+
+        if (!getSubFlag())
+        {
+            if (((A & 0x0F) > 0x09) || getHalfFlag())
+            {
+                correction = correction | 0x06;
+            }
+            if ((A > 0x99) || getCarryFlag())
+            {
+                correction = correction | 0x60;
+                setCarryFlag(true);
+            }
+
+            A = A + correction;
+        }
+        else
+        {
+            if (getHalfFlag())
+            {
+                correction = correction | 0x06;
+            }
+            if (getCarryFlag())
+            {
+                correction = correction | 0x60;
+            }
+
+            A = A - correction;
+        }
+
+        setHalfFlag(false);
+        setZeroFlag(A == 0);
+        lastCycles = 4;
+        break;
+    }
 
     default:
         lastCycles = 4; // TODO... just for testing, not legit GB behaviour
