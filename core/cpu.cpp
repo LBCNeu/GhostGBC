@@ -70,15 +70,15 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-    case 0x3E:
+    case 0x3E: // LD A,u8
         A = memory[PC];
         PC++;
         lastCycles = 8;
         break;
 
-        // ------------- LD Reg, u16 ----------------
+        // ------------- LD Reg,(u16) ----------------
 
-    case 0xFA:                           // LD A, u16 Value at the 16bit Adress gets loaded into A Reg
+    case 0xFA:                           // LD A,(u16) Value at the 16bit Adress gets loaded into A Reg
     {                                    // In Memory: [Opcode 0xFA] [Low Byte] [High Byte]
         uint16_t addr = memory[PC];      // Low Byte -> addr
         PC++;                            // PC shifted to High Byte
@@ -130,6 +130,248 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         A = A;
         lastCycles = 4;
         break;
+
+    case 0x40: // LD B, B... Load unsigned B Reg data int into B Reg
+        B = B;
+        lastCycles = 4;
+        break;
+
+    case 0x41:
+        B = C;
+        lastCycles = 4;
+        break;
+
+    case 0x42:
+        B = D;
+        lastCycles = 4;
+        break;
+
+    case 0x43:
+        B = E;
+        lastCycles = 4;
+        break;
+
+    case 0x44:
+        B = H;
+        lastCycles = 4;
+        break;
+
+    case 0x45:
+        B = L;
+        lastCycles = 4;
+        break;
+
+    case 0x46: // LD B, (HL) <- Brackets in the name mean that is has to load the Value into B and not the adress
+        B = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x47:
+        B = A;
+        lastCycles = 4;
+        break;
+
+    case 0x50: // LD D, B... Load unsigned B Reg data int into D Reg
+        D = B;
+        lastCycles = 4;
+        break;
+
+    case 0x51:
+        D = C;
+        lastCycles = 4;
+        break;
+
+    case 0x52:
+        D = D;
+        lastCycles = 4;
+        break;
+
+    case 0x53:
+        D = E;
+        lastCycles = 4;
+        break;
+
+    case 0x54:
+        D = H;
+        lastCycles = 4;
+        break;
+
+    case 0x55:
+        D = L;
+        lastCycles = 4;
+        break;
+
+    case 0x56: // LD D, (HL) <- Brackets in the name mean that is has to load the Value into D and not the adress
+        D = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x57:
+        D = A;
+        lastCycles = 4;
+        break;
+
+    case 0x60: // LD H, B... Load unsigned B Reg data int into H Reg
+        H = B;
+        lastCycles = 4;
+        break;
+
+    case 0x61:
+        H = C;
+        lastCycles = 4;
+        break;
+
+    case 0x62:
+        H = D;
+        lastCycles = 4;
+        break;
+
+    case 0x63:
+        H = E;
+        lastCycles = 4;
+        break;
+
+    case 0x64:
+        H = H;
+        lastCycles = 4;
+        break;
+
+    case 0x65:
+        H = L;
+        lastCycles = 4;
+        break;
+
+    case 0x66: // LD H, (HL) <- Brackets in the name mean that is has to load the Value into H and not the adress
+        H = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x67:
+        H = A;
+        lastCycles = 4;
+        break;
+
+    case 0x48: // LD C, B... Load unsigned B Reg data int into C Reg
+        C = B;
+        lastCycles = 4;
+        break;
+
+    case 0x49:
+        C = C;
+        lastCycles = 4;
+        break;
+
+    case 0x4A:
+        C = D;
+        lastCycles = 4;
+        break;
+
+    case 0x4B:
+        C = E;
+        lastCycles = 4;
+        break;
+
+    case 0x4C:
+        C = H;
+        lastCycles = 4;
+        break;
+
+    case 0x4D:
+        C = L;
+        lastCycles = 4;
+        break;
+
+    case 0x4E: // LD C, (HL) <- Brackets in the name mean that is has to load the Value into C and not the adress
+        C = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x4F:
+        C = A;
+        lastCycles = 4;
+        break;
+
+    case 0x58: // LD E, B... Load unsigned B Reg data int into E Reg
+        E = B;
+        lastCycles = 4;
+        break;
+
+    case 0x59:
+        E = C;
+        lastCycles = 4;
+        break;
+
+    case 0x5A:
+        E = D;
+        lastCycles = 4;
+        break;
+
+    case 0x5B:
+        E = E;
+        lastCycles = 4;
+        break;
+
+    case 0x5C:
+        E = H;
+        lastCycles = 4;
+        break;
+
+    case 0x5D:
+        E = L;
+        lastCycles = 4;
+        break;
+
+    case 0x5E: // LD E, (HL) <- Brackets in the name mean that is has to load the Value into E and not the adress
+        E = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x5F:
+        E = A;
+        lastCycles = 4;
+        break;
+
+    case 0x68: // LD L, B... Load unsigned B Reg data int into L Reg
+        L = B;
+        lastCycles = 4;
+        break;
+
+    case 0x69:
+        L = C;
+        lastCycles = 4;
+        break;
+
+    case 0x6A:
+        L = D;
+        lastCycles = 4;
+        break;
+
+    case 0x6B:
+        L = E;
+        lastCycles = 4;
+        break;
+
+    case 0x6C:
+        L = H;
+        lastCycles = 4;
+        break;
+
+    case 0x6D:
+        L = L;
+        lastCycles = 4;
+        break;
+
+    case 0x6E: // LD L, (HL) <- Brackets in the name mean that is has to load the Value into L and not the adress
+        L = memory[getHL()];
+        lastCycles = 8;
+        break;
+
+    case 0x6F:
+        L = A;
+        lastCycles = 4;
+        break;
+
+        // ------------- LD A,rr ----------------
 
     case 0x0A:
         A = memory[getBC()];
@@ -204,7 +446,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-        // ---------- ADD rr, rr ----------------
+        // ---------- ADD rr,rr ----------------
 
     case 0x09: // ADD HL,BC Adds BC to HL
     {
@@ -218,22 +460,22 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ---------- ADD rr,i8 ---------------- TODO
 
-    // case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8
-    // {
-    //     setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
-    //     setCarryFlag((getHL() + getBC()) > 0xFFFF);
-    //     setHL(getHL() + getBC());
-    //     setSubFlag(false);
-    //     setZeroFlag(false);
-    //     PC++;
-    //     lastCycles = 16;
-    //     break;
-    // }
+        // case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8
+        // {
+        //     setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
+        //     setCarryFlag((getHL() + getBC()) > 0xFFFF);
+        //     setHL(getHL() + getBC());
+        //     setSubFlag(false);
+        //     setZeroFlag(false);
+        //     PC++;
+        //     lastCycles = 16;
+        //     break;
+        // }
 
         // ------------- DAA ----------------
 
-    case 0x27:                  // DAA Corrects Additions to be correct in BCD Format instead of Binary / Hex. Unlinke the Intel 8080 the Sharp LR35 (GB CPU) can Correct both additions and subtractions with DAA
-    {                           // Based on documentation on https://blog.ollien.com/posts/gb-daa/
+    case 0x27: // DAA Corrects Additions to be correct in BCD Format instead of Binary / Hex. Unlinke the Intel 8080 the Sharp LR35 (GB CPU) can Correct both additions and subtractions with DAA
+    {          // Based on documentation on https://blog.ollien.com/posts/gb-daa/
         uint8_t correction = 0;
 
         if (!getSubFlag())
