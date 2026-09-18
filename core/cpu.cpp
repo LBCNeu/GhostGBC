@@ -28,7 +28,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     switch (opcode)
     {
 
-    case 0x00: // NOP... Nothing... Absolutely Nothing
+    case 0x00: // NOP... Nothing... Absolutely Nothing TODO
         lastCycles = 4;
         break;
 
@@ -400,7 +400,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         uint16_t addr = 0xFF00 + memory[PC]; // Adress is composed of 0xFF00 and the Byte next to the Opcode
         A = memory[addr];
         PC++;
-        lastCycles = 8;
+        lastCycles = 12;
         break;
     }
 
@@ -409,6 +409,82 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         uint16_t addr = 0xFF00 + C; // Adress is composed of 0xFF00 and C Reg and no following Byte -> no PC++ needed
         A = memory[addr];
         lastCycles = 8;
+        break;
+    }
+
+        // ------------- LD rr,A ----------------
+
+    case 0xE0: // LD (FF00+u8),A Load Value in A Reg into Memory at Adress FF00+u8
+    {
+        uint16_t addr = 0xFF00 + memory[PC]; // Adress is composed of 0xFF00 and the Byte next to the Opcode
+        memory[addr] = A;
+        PC++;
+        lastCycles = 12;
+        break;
+    }
+
+    case 0xE2: // LD (FF00+C),A Load Value in A Reg into Memory at  Adress FF00+C
+    {
+        uint16_t addr = 0xFF00 + C; // Adress is composed of 0xFF00 and C Reg and no following Byte -> no PC++ needed
+        memory[addr] = A;
+        lastCycles = 8;
+        break;
+    }
+
+        // ------------- LD (HL),r ----------------
+
+    case 0x70: // LD (HL),B <- Brackets in the name mean that is has to load the Value from B Reg into Memory at addr HL
+        memory[getHL()] = B;
+        lastCycles = 8;
+        break;
+
+    case 0x71:
+        memory[getHL()] = C;
+        lastCycles = 8;
+        break;
+
+    case 0x72:
+        memory[getHL()] = D;
+        lastCycles = 8;
+        break;
+
+    case 0x73:
+        memory[getHL()] = E;
+        lastCycles = 8;
+        break;
+
+    case 0x74:
+        memory[getHL()] = H;
+        lastCycles = 8;
+        break;
+
+    case 0x75:
+        memory[getHL()] = L;
+        lastCycles = 8;
+        break;
+
+    case 0x77:
+        memory[getHL()] = A;
+        lastCycles = 8;
+        break;
+
+    case 0x36: // LD (HL),u8 Load u8 into Memory at addr HL
+        memory[getHL()] = memory[PC];
+        lastCycles = 12;
+        PC++;
+        break;
+
+        // ------------- LD (u16),r ----------------
+
+    case 0xEA:                           // LD (u16),A Value at A Reg gets loaded to memory at 16bit Adress
+    {                                    // In Memory: [Opcode 0xEA] [Low Byte] [High Byte]
+        uint16_t addr = memory[PC];      // Low Byte -> addr
+        PC++;                            // PC shifted to High Byte
+        addr = addr | (memory[PC] << 8); // High byte gets shifted left and then merged with Low Byte (in addr)
+        // Before: [Low Byte] [High Byte] -> After shift + merge -> 0x[High Byte] [Low Byte]
+        memory[addr] = A; // Value at A Reg into addr
+        PC++;
+        lastCycles = 16;
         break;
     }
 
@@ -512,8 +588,229 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- PUSH ----------------
+
+    case 0xC5: // PUSH BC Pushes BC Joint Reg into Stack
+    {
+        SP--;
+        memory[SP] = C;
+        SP--;
+        memory[SP] = B;
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xD5: // PUSH DE Pushes DE Joint Reg into Stack
+    {
+        SP--;
+        memory[SP] = E;
+        SP--;
+        memory[SP] = D;
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xE5: // PUSH HL Pushes HL Joint Reg into Stack
+    {
+        SP--;
+        memory[SP] = L;
+        SP--;
+        memory[SP] = H;
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xF5: // PUSH AF Pushes AF Joint Reg into Stack
+    {
+        SP--;
+        memory[SP] = F;
+        SP--;
+        memory[SP] = A;
+        lastCycles = 16;
+        break;
+    }
+
+        // ------------- POP ----------------
+
+    case 0xC1: // POP BC POPs from Stack into Joint Reg BC
+    {
+        C = memory[SP];
+        SP++;
+        B = memory[SP];
+        SP++;
+        lastCycles = 12;
+        break;
+    }
+
+    case 0xD1: // POP DE POPs from Stack into Joint Reg DE
+    {
+        E = memory[SP];
+        SP++;
+        D = memory[SP];
+        SP++;
+        lastCycles = 12;
+        break;
+    }
+
+    case 0xE1: // POP HL POPs from Stack into Joint Reg HL
+    {
+        L = memory[SP];
+        SP++;
+        H = memory[SP];
+        SP++;
+        lastCycles = 12;
+        break;
+    }
+
+    case 0xF1: // POP AF POPs from Stack into Joint Reg AF
+    {
+        F = memory[SP];
+        SP++;
+        A = memory[SP];
+        SP++;
+        lastCycles = 12;
+        break;
+    }
+
+        // ------------- CALL ----------------
+
+    case 0xCD: // CALL u16 Jumps Program to 16bit addr, saves the jumpoff location into Stack
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = addr;
+
+        lastCycles = 24;
+        break;
+    }
+
+        // ------------- RET ----------------
+
+    case 0xC9: // RET ... POPs Return Adress from Stack and jumps back
+    {
+        uint16_t addr = 0;
+
+        addr = memory[SP];
+        SP++;
+        addr = addr | (memory[SP] << 8);
+        SP++;
+
+        PC = addr;
+
+        lastCycles = 16;
+        break;
+    }
+
+        // ------------- JP ----------------
+
+    case 0xC3: // JP u16 Jumps PC unconditionally to 16bit Address
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+        PC = addr;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xCA: // JP Z,u16 Jumps PC to 16bit Address only if Zero Flag is True
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getZeroFlag() == true)
+        {
+            PC = addr;
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xDA: // JP C,u16 Jumps PC to 16bit Address only if Carry Flag is True
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getCarryFlag() == true)
+        {
+            PC = addr;
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xC2: // JP NZ,u16 Jumps PC to 16bit Address only if Zero Flag is False
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getZeroFlag() == false)
+        {
+            PC = addr;
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xD2: // JP NC,u16 Jumps PC to 16bit Address only if Carry Flag is False
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getCarryFlag() == false)
+        {
+            PC = addr;
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
     default:
-        lastCycles = 4; // TODO... just for testing, not legit GB behaviour
+        lastCycles = 4; // TODO... just for testing, not real GB behaviour
         break;
     }
 }
