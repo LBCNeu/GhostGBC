@@ -1,9 +1,10 @@
 # GhostGBC
-Simple GBC emulator project for custom STM32 hardware by lbcn.eu.
+Simple GBC emulator project in portable C++ for PC or custom hardware (e.g. ESP32) by lbcn.eu.
 
 ## Contact:
-info@lbcn.eu
-https://lbcn.eu
+
+* info@lbcn.eu
+* https://lbcn.eu
 
 ## Credits
 
