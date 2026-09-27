@@ -1,5 +1,5 @@
 # GhostGBC
-![Project Logo](images/Banner.png)
+![Project Logo](images/GhostGBC_Logo_Banner.png)
 Simple GBC emulator project in portable C++ for PC or custom hardware (e.g. ESP32) by lbcn.eu.
 
 
