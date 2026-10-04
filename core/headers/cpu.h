@@ -72,27 +72,39 @@ struct cpu
     {
         uint8_t mask = 1 << 6;
         if (set)
+        {
             F = F | mask;
+        }
         else
+        {
             F = F & (~mask);
+        }
     }
 
     void setHalfFlag(bool set)
     {
         uint8_t mask = 1 << 5;
         if (set)
+        {
             F = F | mask;
+        }
         else
+        {
             F = F & (~mask);
+        }
     }
 
     void setCarryFlag(bool set)
     {
         uint8_t mask = 1 << 4;
         if (set)
+        {
             F = F | mask;
+        }
         else
+        {
             F = F & (~mask);
+        }
     }
 
     void reset();

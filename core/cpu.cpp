@@ -474,6 +474,68 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         PC++;
         break;
 
+        // ------------- LD (rr),A ----------------
+
+    case 0x02: // LD (BC),A <- Brackets in the name mean that is has to load the Value from A Reg into Memory at addr in (BC)
+        memory[getBC()] = A;
+        lastCycles = 8;
+        break;
+
+    case 0x12: // LD (DE),A
+        memory[getDE()] = A;
+        lastCycles = 8;
+        break;
+
+    case 0x22: // LD (HL+),A Writes Value from A Reg into memory at addr in HL joint Reg, and then increases HL joint Reg by 1
+        memory[getHL()] = A;
+        setHL(getHL() + 1);
+        lastCycles = 8;
+        break;
+
+    case 0x32: // LD (HL-),A Writes Value from A Reg into memory at addr in HL joint Reg, and then decreases HL joint Reg by 1
+        memory[getHL()] = A;
+        setHL(getHL() - 1);
+        lastCycles = 8;
+        break;
+
+        // ------------- LD rr,u16 ----------------
+
+    case 0x01: // LD BC,u16 u16 Value after Opcode gets written into BC joint Reg
+        uint16_t val = memory[PC];
+        PC++;
+        val = val | (memory[PC] << 8);
+        PC++;
+        setBC(val);
+        lastCycles = 12;
+        break;
+
+    case 0x11: // LD DE,u16 u16 Value after Opcode gets written into DE joint Reg
+        uint16_t val = memory[PC];
+        PC++;
+        val = val | (memory[PC] << 8);
+        PC++;
+        setDE(val);
+        lastCycles = 12;
+        break;
+
+    case 0x21: // LD HL,u16 u16 Value after Opcode gets written into HL joint Reg
+        uint16_t val = memory[PC];
+        PC++;
+        val = val | (memory[PC] << 8);
+        PC++;
+        setHL(val);
+        lastCycles = 12;
+        break;
+
+    case 0x31: // LD SP,u16 u16 Value after Opcode gets written into SP
+        uint16_t val = memory[PC];
+        PC++;
+        val = val | (memory[PC] << 8);
+        PC++;
+        SP = val;
+        lastCycles = 12;
+        break;
+
         // ------------- LD (u16),r ----------------
 
     case 0xEA:                           // LD (u16),A Value at A Reg gets loaded to memory at 16bit Adress
@@ -499,6 +561,83 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 4;
         break;
 
+    case 0x2C: // INC L Increase Value of L Reg by 1
+        L++;
+        setZeroFlag(L == 0);
+        setSubFlag(false);
+        setHalfFlag((L & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x1C: // INC E Increase Value of E Reg by 1
+        E++;
+        setZeroFlag(E == 0);
+        setSubFlag(false);
+        setHalfFlag((E & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x0C: // INC C Increase Value of C Reg by 1
+        C++;
+        setZeroFlag(C == 0);
+        setSubFlag(false);
+        setHalfFlag((C & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x04: // INC B Increase Value of B Reg by 1
+        B++;
+        setZeroFlag(B == 0);
+        setSubFlag(false);
+        setHalfFlag((B & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x14: // INC D Increase Value of D Reg by 1
+        D++;
+        setZeroFlag(D == 0);
+        setSubFlag(false);
+        setHalfFlag((D & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x24: // INC H Increase Value of H Reg by 1
+        H++;
+        setZeroFlag(H == 0);
+        setSubFlag(false);
+        setHalfFlag((H & 0x0F) == 0x00);
+        lastCycles = 4;
+        break;
+
+    case 0x34: // INC (HL) Increase Value at addr in (HL) joint Reg by 1
+        memory[getHL()] = memory[getHL()] + 1;
+        setZeroFlag(memory[getHL()] == 0);
+        setSubFlag(false);
+        setHalfFlag((memory[getHL()] & 0x0F) == 0x00);
+        lastCycles = 12;
+        break;
+
+    case 0x03: // INC BC Increase Value of BC joint Reg by 1
+        setBC(getBC() + 1);
+        // INC BC, DE, HL and SP do not touch the Flags
+        lastCycles = 8;
+        break;
+
+    case 0x13: // INC DE Increase Value of DE joint Reg by 1
+        setDE(getDE() + 1);
+        lastCycles = 8;
+        break;
+
+    case 0x23: // INC HL Increase Value of HL joint Reg by 1
+        setHL(getHL() + 1);
+        lastCycles = 8;
+        break;
+
+    case 0x33: // INC SP Increase Value of SP joint Reg by 1
+        SP = SP++;
+        lastCycles = 8;
+        break;
+
         // ------------- DEC ----------------
 
     case 0x3D: // DEC A Decrease Value of A Reg by 1
@@ -508,6 +647,82 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setHalfFlag((A & 0x0F) == 0x0F); // Half Borrow checks i there was a "reverse" carry from the higher 4 bits to the lower. A gets put through a mask (0x0F, 1111) with & to check the low 4 bits, then it gets checked if they are all 1, that would mean that a "reverse" carry/borrow took place
         // DEC does not touch the Carry Flag!!!
         lastCycles = 4;
+        break;
+
+    case 0x2D: // DEC L Decrease Value of L Reg by 1
+        L--;
+        setZeroFlag(L == 0);
+        setSubFlag(true);
+        setHalfFlag((L & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x1D: // DEC E Decrease Value of E Reg by 1
+        E--;
+        setZeroFlag(E == 0);
+        setSubFlag(true);
+        setHalfFlag((E & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x0D: // DEC C Decrease Value of C Reg by 1
+        C--;
+        setZeroFlag(C == 0);
+        setSubFlag(true);
+        setHalfFlag((C & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x05: // DEC B Decrease Value of B Reg by 1
+        B--;
+        setZeroFlag(B == 0);
+        setSubFlag(true);
+        setHalfFlag((B & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x15: // DEC D Decrease Value of D Reg by 1
+        D--;
+        setZeroFlag(D == 0);
+        setSubFlag(true);
+        setHalfFlag((D & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x25: // DEC H Decrease Value of H Reg by 1
+        H--;
+        setZeroFlag(H == 0);
+        setSubFlag(true);
+        setHalfFlag((H & 0x0F) == 0x0F);
+        lastCycles = 4;
+        break;
+
+    case 0x35: // DEC (HL) Decrease Value at addr in (HL) joint Reg
+        memory[getHL()] = memory[getHL()] - 1;
+        setZeroFlag(memory[getHL()] == 0);
+        setSubFlag(true);
+        setHalfFlag((memory[getHL()] & 0x0F) == 0x0F);
+        lastCycles = 12;
+        break;
+
+    case 0x0B: // DEC BC Decrease Value of BC joint Reg by 1
+        setBC(getBC() - 1);
+        lastCycles = 8;
+        break;
+
+    case 0x1B: // DEC DE Decrease Value of DE joint Reg by 1
+        setBC(getDE() - 1);
+        lastCycles = 8;
+        break;
+
+    case 0x2B: // DEC HL Decrease Value of HL joint Reg by 1
+        setHL(getHL() - 1);
+        lastCycles = 8;
+        break;
+
+    case 0x3B: // DEC SP Decrease Value of SP joint Reg by 1
+        SP = SP - 1;
+        lastCycles = 8;
         break;
 
         // ------------- ADD ----------------
@@ -529,6 +744,36 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
         setCarryFlag((getHL() + getBC()) > 0xFFFF);
         setHL(getHL() + getBC());
+        setSubFlag(false);
+        lastCycles = 8;
+        break;
+    }
+
+    case 0x19: // ADD HL,DE Adds DE to HL
+    {
+        setHalfFlag(((getHL() & 0x0FFF) + (getDE() & 0x0FFF)) > 0x0FFF);
+        setCarryFlag((getHL() + getDE()) > 0xFFFF);
+        setHL(getHL() + getDE());
+        setSubFlag(false);
+        lastCycles = 8;
+        break;
+    }
+
+    case 0x29: // ADD HL,HL Adds HL to HL
+    {
+        setHalfFlag(((getHL() & 0x0FFF) + (getHL() & 0x0FFF)) > 0x0FFF);
+        setCarryFlag((getHL() + getHL()) > 0xFFFF);
+        setHL(getHL() + getHL());
+        setSubFlag(false);
+        lastCycles = 8;
+        break;
+    }
+
+    case 0x39: // ADD HL,SP Adds SP to HL
+    {
+        setHalfFlag(((getHL() & 0x0FFF) + (SP & 0x0FFF)) > 0x0FFF);
+        setCarryFlag((getHL() + SP) > 0xFFFF);
+        setHL(getHL() + SP);
         setSubFlag(false);
         lastCycles = 8;
         break;
@@ -593,9 +838,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0xC5: // PUSH BC Pushes BC Joint Reg into Stack
     {
         SP--;
-        memory[SP] = C;
-        SP--;
         memory[SP] = B;
+        SP--;
+        memory[SP] = C;
         lastCycles = 16;
         break;
     }
@@ -603,9 +848,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0xD5: // PUSH DE Pushes DE Joint Reg into Stack
     {
         SP--;
-        memory[SP] = E;
-        SP--;
         memory[SP] = D;
+        SP--;
+        memory[SP] = E;
         lastCycles = 16;
         break;
     }
@@ -613,9 +858,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0xE5: // PUSH HL Pushes HL Joint Reg into Stack
     {
         SP--;
-        memory[SP] = L;
-        SP--;
         memory[SP] = H;
+        SP--;
+        memory[SP] = L;
         lastCycles = 16;
         break;
     }
@@ -623,9 +868,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0xF5: // PUSH AF Pushes AF Joint Reg into Stack
     {
         SP--;
-        memory[SP] = F;
-        SP--;
         memory[SP] = A;
+        SP--;
+        memory[SP] = F;
         lastCycles = 16;
         break;
     }
@@ -690,6 +935,110 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         PC = addr;
 
         lastCycles = 24;
+        break;
+    }
+
+    case 0xCC: // CALL Z,u16 Jumps Program to 16bit addr only if Z-Flag is set, saves the jumpoff location into Stack
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getZeroFlag() == true)
+        {
+            SP--;
+            memory[SP] = (PC & 0xFF00) >> 8;
+            SP--;
+            memory[SP] = (PC & 0x00FF);
+
+            PC = addr;
+            lastCycles = 24;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xDC: // CALL C,u16 Jumps Program to 16bit addr only if C-Flag is set, saves the jumpoff location into Stack
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getCarryFlag() == true)
+        {
+            SP--;
+            memory[SP] = (PC & 0xFF00) >> 8;
+            SP--;
+            memory[SP] = (PC & 0x00FF);
+
+            PC = addr;
+            lastCycles = 24;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xC4: // CALL NZ,u16 Jumps Program to 16bit addr only if F-Flag is not set, saves the jumpoff location into Stack
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getZeroFlag() == false)
+        {
+            SP--;
+            memory[SP] = (PC & 0xFF00) >> 8;
+            SP--;
+            memory[SP] = (PC & 0x00FF);
+
+            PC = addr;
+            lastCycles = 24;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
+        break;
+    }
+
+    case 0xD4: // CALL NC,u16 Jumps Program to 16bit addr only if C-Flag is not set, saves the jumpoff location into Stack
+    {
+        uint16_t addr = 0;
+        addr = memory[PC];
+        PC++;
+        addr = addr | (memory[PC] << 8);
+        PC++;
+
+        if (getCarryFlag() == false)
+        {
+            SP--;
+            memory[SP] = (PC & 0xFF00) >> 8;
+            SP--;
+            memory[SP] = (PC & 0x00FF);
+
+            PC = addr;
+            lastCycles = 24;
+        }
+        else
+        {
+            lastCycles = 12;
+        }
+
         break;
     }
 
