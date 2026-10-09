@@ -1,11 +1,14 @@
 #include "cpu.h"
 
+// TODO -> Not finished, Problem, needs Documentaion etc.
+// TOCHECK -> Finished but uncertain if it is correct
+
 void cpu::reset()
 {
     A = 0x01;
     F = 0xB0; // Register Values of real GB DMG Harware on Power-up
     B = 0x00;
-    C = 0x13; // TODO... Via Pan Docs: these are the Power-up values for the DMG version but the CGB (GBC) versions are very diffrent... for testing leave I'll keep DMG Values
+    C = 0x13; // TODO... Via Pan Docs: these are the Power-up values for the DMG version but the CGB (GBC) versions are very diffrent... for testing I'll keep DMG Values
     D = 0x00;
     E = 0xD8;
     H = 0x01;
@@ -29,6 +32,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     {
 
     case 0x00: // NOP... Nothing... Absolutely Nothing TODO
+        lastCycles = 4;
+        break;
+
+    case 0x10: // STOP (second Byte (00) gets skipped) TODO
+        PC++;
         lastCycles = 4;
         break;
 
@@ -801,19 +809,55 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ---------- ADD rr,i8 ---------------- TODO
+        // ---------- ADD SP,i8 ---------------- TOCHECK
 
-        // case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8
-        // {
-        //     setHalfFlag(((getHL() & 0x0FFF) + (getBC() & 0x0FFF)) > 0x0FFF);
-        //     setCarryFlag((getHL() + getBC()) > 0xFFFF);
-        //     setHL(getHL() + getBC());
-        //     setSubFlag(false);
-        //     setZeroFlag(false);
-        //     PC++;
-        //     lastCycles = 16;
-        //     break;
-        // }
+    case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8 Adds a signed 8 bit integer to SP
+    {
+        uint8_t unsigned_val = memory[PC];        // unsigned_val reads the Byte as unsigned int
+        int8_t signed_val = (int8_t)unsigned_val; // unsigned_val gets reinterpreted as a signed int, this CPU Function needs both
+
+        setHalfFlag(((SP & 0x0F) + (unsigned_val & 0x0F)) > 0x0F); // GB CPU uses the unsigned variant of the following Byte to calculate the flags
+        setCarryFlag(((SP & 0xFF) + unsigned_val) > 0xFF);
+        setZeroFlag(false);
+        setSubFlag(false);
+
+        SP = SP + signed_val;
+
+        // Signed ints:
+        // 0x00-0x7F means 0 to 127
+        // 0x80-0xFF means -128 to -1 (0xFF = -1, 0xFE = -2, 0x80 = -128)
+
+        PC++;
+        lastCycles = 16;
+        break;
+    }
+
+        // ---------- LD HL,SP+i8 ---------------- TOCHECK
+
+    case 0xF8: // LD HL,SP+i8 / LD HL,SP+e8, LD HL,SP+r8 Adds a signed 8 bit integer to SP and then saves that Value into HL
+    {
+
+        // IMPORTANT: SP does not get changed in this Operation, the addition only happens internally to store the Value in HL!!!
+
+        uint8_t unsigned_val = memory[PC];        // unsigned_val reads the Byte as unsigned int
+        int8_t signed_val = (int8_t)unsigned_val; // unsigned_val gets reinterpreted as a signed int, this CPU Function needs both
+
+        setHalfFlag(((SP & 0x0F) + (unsigned_val & 0x0F)) > 0x0F); // GB CPU uses the unsigned variant of the following Byte to calculate the flags
+        setCarryFlag(((SP & 0xFF) + unsigned_val) > 0xFF);
+        setZeroFlag(false);
+        setSubFlag(false);
+
+        uint16_t sum = SP + signed_val;
+        setHL(sum);
+
+        // Signed ints:
+        // 0x00-0x7F means 0 to 127
+        // 0x80-0xFF means -128 to -1 (0xFF = -1, 0xFE = -2, 0x80 = -128)
+
+        PC++;
+        lastCycles = 12;
+        break;
+    }
 
         // ------------- DAA ----------------
 
@@ -1186,6 +1230,54 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     {
         uint8_t carry = (A & 0x80) >> 7;
         A = (A << 1) | carry;
+
+        setZeroFlag(false);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(carry);
+
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- RLA ----------------
+
+    case 0x17: // RLA Rotate Left Accumulator (A Reg)... Shifts A Reg left by 1 and then takes the Carry-Flag bit and put is back on the right, the bit on the left that falls out gets put into the carry flag
+    {
+        uint8_t carry = (A & 0x80) >> 7;
+        A = (A << 1) | getCarryFlag();
+
+        setZeroFlag(false);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(carry);
+
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- RRCA ----------------
+
+    case 0x0F: // RRCA Rotate Right Circular Accumulator (A Reg)... Shifts A Reg right by 1 and then takes the bit that falls out on the right and put is back on the left
+    {
+        uint8_t carry = (A & 0x01);
+        A = (A >> 1) | (carry << 7); // carry only gets shifted for this Operation not in general, so the setCarryFlag(carry) gets a clear 0 or 1
+
+        setZeroFlag(false);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(carry);
+
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- RRA ----------------
+
+    case 0x1F: // RRA Rotate Right Accumulator (A Reg)... Shifts A Reg right by 1 and then takes the Carry-Flag bit and put is back on the left, the bit on the right that falls out gets put into the carry flag
+    {
+        uint8_t carry = (A & 0x01);           // Do not shift like RRCA or RLA because it becomes 0x10000000 and that is not the correct value for setCarryFlag() (should be 1 = true)
+        A = (A >> 1) | (getCarryFlag() << 7); // Unlike RRCA carry is only needed for setCarryFlag() and not merged with A again, instead getCarryFlag()'s Value needs to be shifted to the left (just in this Operation not in general) to be merged correctly
 
         setZeroFlag(false);
         setSubFlag(false);
