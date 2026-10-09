@@ -543,12 +543,34 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         uint16_t addr = memory[PC];      // Low Byte -> addr
         PC++;                            // PC shifted to High Byte
         addr = addr | (memory[PC] << 8); // High byte gets shifted left and then merged with Low Byte (in addr)
+        PC++;
         // Before: [Low Byte] [High Byte] -> After shift + merge -> 0x[High Byte] [Low Byte]
         memory[addr] = A; // Value at A Reg into addr
-        PC++;
         lastCycles = 16;
         break;
     }
+
+        // ------------- LD (u16),SP ----------------
+
+    case 0x08:                           // LD (u16),SP Value at SP gets loaded to memory at 16bit Adress
+    {                                    // In Memory: [Opcode 0x08] [Low Byte] [High Byte]
+        uint16_t addr = memory[PC];      // Low Byte -> addr
+        PC++;                            // PC shifted to High Byte
+        addr = addr | (memory[PC] << 8); // High byte gets shifted left and then merged with Low Byte (in addr)
+        PC++;
+        memory[addr] = SP & 0xFF;                        // Low Byte of SP
+        memory[(uint16_t)(addr + 1)] = (SP >> 8) & 0xFF; // High Byte of SP
+        // Edge case: When adding 1 to addr and addr is 0xFFFF the operation witll give 0x10000 wich is false, it should wrap around back to 0x0000 like real hardware, to chop off the 1 from 0x10000 (uint16_t) is used before the + operation to typecast the result back into 16bit
+        lastCycles = 20;
+        break;
+    }
+
+        // ------------- LD SP,HL ----------------
+
+    case 0xF9: // LD SP,HL Value of HL joint Reg gets written into the Stack-Pointer
+        SP = getHL();
+        lastCycles = 8;
+        break;
 
         // ------------- INC ----------------
 
@@ -720,7 +742,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-    case 0x3B: // DEC SP Decrease Value of SP joint Reg by 1
+    case 0x3B: // DEC SP Decrease Value of SP by 1
         SP = SP - 1;
         lastCycles = 8;
         break;
@@ -1155,6 +1177,22 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
             lastCycles = 12;
         }
 
+        break;
+    }
+
+        // ------------- RLCA ----------------
+
+    case 0x07: // RLCA Rotate Left Circular Accumulator (A Reg)... Shifts A Reg left by 1 and then takes the bit that falls out on the left and put is back on the right
+    {
+        uint8_t carry = (A & 0x80) >> 7;
+        A = (A << 1) | carry;
+
+        setZeroFlag(false);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(carry);
+
+        lastCycles = 4;
         break;
     }
 

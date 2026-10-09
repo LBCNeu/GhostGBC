@@ -12,3 +12,5 @@ https://blog.ollien.com/posts/gb-daa/
 ## Pan Docs
 https://gbdev.io/pandocs/Specifications.html
 https://gbdev.io/pandocs/Power_Up_Sequence.html
+
+## BAT
