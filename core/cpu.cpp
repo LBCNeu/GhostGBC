@@ -931,6 +931,20 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- SUB ---------------- // TOCHECK
+
+    case 0xD6: // SUB A,u8 Adds u8 Val to A Reg
+    {
+        setHalfFlag((A & 0x0F) < (memory[PC] & 0x0F));
+        setCarryFlag(A < memory[PC]);
+        A = A - memory[PC];
+        setZeroFlag(A == 0);
+        setSubFlag(true);
+        PC++;
+        lastCycles = 8;
+        break;
+    }
+
         // ------------- SUB r,r ---------------- // TOCHECK
 
     case 0x90: // SUB A,B
@@ -1298,6 +1312,112 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- RST ----------------
+
+    case 0xC7: // RST 00h Jumps Program to Hex addr 0x0000, saves PC into Stack
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0000;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xD7: // RST 10h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0010;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xE7: // RST 20h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0020;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xF7: // RST 30h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0030;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xCF: // RST 08h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0008;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xDF: // RST 18h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0018;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xEF: // RST 28h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0028;
+
+        lastCycles = 16;
+        break;
+    }
+
+    case 0xFF: // RST 38h
+    {
+        SP--;
+        memory[SP] = (PC & 0xFF00) >> 8;
+        SP--;
+        memory[SP] = (PC & 0x00FF);
+
+        PC = 0x0038;
+
+        lastCycles = 16;
+        break;
+    }
+
         // ------------- RET ----------------
 
     case 0xC9: // RET ... POPs Return Adress from Stack and jumps back
@@ -1312,6 +1432,90 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         PC = addr;
 
         lastCycles = 16;
+        break;
+    }
+
+    case 0xC8: // RET Z ... POPs Return Adress from Stack and jumps back only if Z-Flag true
+    {
+        if (getZeroFlag() == true)
+        {
+            uint16_t addr = 0;
+
+            addr = memory[SP];
+            SP++;
+            addr = addr | (memory[SP] << 8);
+            SP++;
+
+            PC = addr;
+            lastCycles = 20;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+        break;
+    }
+
+    case 0xD8: // RET C ... POPs Return Adress from Stack and jumps back only if C-Flag true
+    {
+        if (getCarryFlag() == true)
+        {
+            uint16_t addr = 0;
+
+            addr = memory[SP];
+            SP++;
+            addr = addr | (memory[SP] << 8);
+            SP++;
+
+            PC = addr;
+            lastCycles = 20;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+        break;
+    }
+
+    case 0xC0: // RET NZ ... POPs Return Adress from Stack and jumps back only if Z-Flag false
+    {
+        if (getZeroFlag() == false)
+        {
+            uint16_t addr = 0;
+
+            addr = memory[SP];
+            SP++;
+            addr = addr | (memory[SP] << 8);
+            SP++;
+
+            PC = addr;
+            lastCycles = 20;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+        break;
+    }
+
+    case 0xD0: // RET NC ... POPs Return Adress from Stack and jumps back only if C-Flag false
+    {
+        if (getCarryFlag() == false)
+        {
+            uint16_t addr = 0;
+
+            addr = memory[SP];
+            SP++;
+            addr = addr | (memory[SP] << 8);
+            SP++;
+
+            PC = addr;
+            lastCycles = 20;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
         break;
     }
 
@@ -1414,6 +1618,13 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+    case 0xE9: // JP HL Jumps PC to 16bit Address in HL
+    {
+        PC = getHL();
+        lastCycles = 4;
+        break;
+    }
+
         // ------------- RLCA ----------------
 
     case 0x07: // RLCA Rotate Left Circular Accumulator (A Reg)... Shifts A Reg left by 1 and then takes the bit that falls out on the left and put is back on the right
@@ -1475,6 +1686,21 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setCarryFlag(carry);
 
         lastCycles = 4;
+        break;
+    }
+
+        // ------------- AND ---------------- // TOCHECK
+
+    case 0xE6: // AND A,u8 AND Operation with A Reg and u8 Val
+    {
+        A = A & memory[PC];
+
+        setZeroFlag(A == 0);
+        setSubFlag(false);
+        setHalfFlag(true);
+        setCarryFlag(false);
+        PC++;
+        lastCycles = 8;
         break;
     }
 
@@ -1584,6 +1810,21 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- OR ---------------- // TOCHECK
+
+    case 0xF6: // OR A,u8 OR Operation with A Reg and u8 Val
+    {
+        A = A | B;
+
+        setZeroFlag(A == 0);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(false);
+        PC++;
+        lastCycles = 8;
+        break;
+    }
+
         // ------------- OR r,r ----------------
 
     case 0xB0: // OR A,B
@@ -1687,6 +1928,25 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setCarryFlag(false);
 
         lastCycles = 4;
+        break;
+    }
+
+        // ------------- ADC ---------------- // TOCHECK
+
+    case 0xCE: // ADC A,u8 Add with Carry A Reg + u8 Val
+    {
+        uint16_t result = A + memory[PC] + getCarryFlag();
+
+        setHalfFlag(((A & 0x0F) + (memory[PC] & 0x0F) + getCarryFlag()) > 0x0F);
+
+        A = (uint8_t)result; // casting to 8bit for A Reg
+
+        setCarryFlag(result > 0xFF);
+        setZeroFlag(A == 0);
+        setSubFlag(false);
+
+        PC++;
+        lastCycles = 8;
         break;
     }
 
@@ -1820,6 +2080,23 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- SBC ---------------- // TOCHECK
+
+    case 0xDE: // SBC A,u8 Subtract with Carry (Borrow) A Reg - u8 Val
+    {
+        setHalfFlag((A & 0x0F) < ((memory[PC] & 0x0F) + getCarryFlag()));
+        setCarryFlag(A < (memory[PC] + getCarryFlag()));
+
+        A = A - memory[PC] - getCarryFlag();
+
+        setZeroFlag(A == 0);
+        setSubFlag(true);
+
+        PC++;
+        lastCycles = 8;
+        break;
+    }
+
         // ------------- SBC r,r ----------------
 
     case 0x98: // SBC A,B Subtract with Carry (Borrow)
@@ -1934,6 +2211,22 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- XOR ---------------- // TOCHECK
+
+    case 0xEE: // XOR A,u8 XOR Op with A Reg and u8 Val
+    {
+        A = A ^ memory[PC];
+
+        setZeroFlag(A == 0);
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(false);
+
+        PC++;
+        lastCycles = 8;
+        break;
+    }
+
         // ------------- XOR r,r ----------------
 
     case 0xA8: // XOR A,B
@@ -2037,6 +2330,20 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setCarryFlag(false);
 
         lastCycles = 4;
+        break;
+    }
+
+        // ------------- CP ---------------- // TOCHECK
+
+    case 0xFE: // CP A,u8 Does a A - u8 Operation but discardes the Result and just sets the Flags
+    {
+        setZeroFlag((A - memory[PC]) == 0);
+        setHalfFlag((A & 0x0F) < (memory[PC] & 0x0F));
+        setCarryFlag(A < memory[PC]);
+        setSubFlag(true);
+
+        PC++;
+        lastCycles = 8;
         break;
     }
 
