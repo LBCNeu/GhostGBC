@@ -4,6 +4,8 @@
 
 struct cpu
 {
+    bool ime = false; // Interrupt Master Enable TODOC
+
     // 8-bit Registers
     uint8_t A, F; // why in this Layout
     uint8_t B, C;

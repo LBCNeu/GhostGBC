@@ -1,7 +1,10 @@
 #include "cpu.h"
+#include <cstdio> // for testing TODO
 
-// TODO -> Not finished, Problem, needs Documentaion etc.
+// TODO -> Not finished, Bug etc.
+// TODOC -> Needs Documentaion / Documenation not finished
 // TOCHECK -> Finished but uncertain if it is correct
+// Sub and Negative (N-Flag) are the same
 
 void cpu::reset()
 {
@@ -37,6 +40,20 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x10: // STOP (second Byte (00) gets skipped) TODO
         PC++;
+        lastCycles = 4;
+        break;
+
+    case 0x76: // HALT TODO
+        lastCycles = 4;
+        break;
+
+    case 0xF3: // DI Disable Interrupts
+        ime = false;
+        lastCycles = 4;
+        break;
+
+    case 0xFB: // EI Enable Interrupts
+        ime = true;
         lastCycles = 4;
         break;
 
@@ -672,7 +689,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
 
     case 0x33: // INC SP Increase Value of SP joint Reg by 1
-        SP = SP++;
+        SP++;
         lastCycles = 8;
         break;
 
@@ -749,7 +766,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
 
     case 0x1B: // DEC DE Decrease Value of DE joint Reg by 1
-        setBC(getDE() - 1);
+        setDE(getDE() - 1);
         lastCycles = 8;
         break;
 
@@ -780,7 +797,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x80: // ADD A,B Adds B Reg Val to A Reg
     {
         setHalfFlag(((A & 0x0F) + (B & 0x0F)) > 0x0F);
-        setCarryFlag((A + B) > 0xF);
+        setCarryFlag((A + B) > 0xFF);
         A = A + B;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -791,7 +808,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x81: // ADD A,C
     {
         setHalfFlag(((A & 0x0F) + (C & 0x0F)) > 0x0F);
-        setCarryFlag((A + C) > 0xF);
+        setCarryFlag((A + C) > 0xFF);
         A = A + C;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -802,7 +819,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x82: // ADD A,D
     {
         setHalfFlag(((A & 0x0F) + (D & 0x0F)) > 0x0F);
-        setCarryFlag((A + D) > 0xF);
+        setCarryFlag((A + D) > 0xFF);
         A = A + D;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -813,7 +830,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x83: // ADD A,E
     {
         setHalfFlag(((A & 0x0F) + (E & 0x0F)) > 0x0F);
-        setCarryFlag((A + E) > 0xF);
+        setCarryFlag((A + E) > 0xFF);
         A = A + E;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -824,7 +841,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x84: // ADD A,H
     {
         setHalfFlag(((A & 0x0F) + (H & 0x0F)) > 0x0F);
-        setCarryFlag((A + H) > 0xF);
+        setCarryFlag((A + H) > 0xFF);
         A = A + H;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -835,7 +852,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x85: // ADD A,L
     {
         setHalfFlag(((A & 0x0F) + (L & 0x0F)) > 0x0F);
-        setCarryFlag((A + L) > 0xF);
+        setCarryFlag((A + L) > 0xFF);
         A = A + L;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -847,7 +864,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     {
         uint8_t val = memory[getHL()];
         setHalfFlag(((A & 0x0F) + (val & 0x0F)) > 0x0F);
-        setCarryFlag((A + val) > 0xF);
+        setCarryFlag((A + val) > 0xFF);
         A = A + val;
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -858,11 +875,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0x87: // ADD A,A
     {
         setHalfFlag(((A & 0x0F) + (A & 0x0F)) > 0x0F);
-        setCarryFlag((A + A) > 0xF);
+        setCarryFlag((A + A) > 0xFF);
         A = A + A;
         setZeroFlag(A == 0);
         setSubFlag(false);
-        lastCycles = 8;
+        lastCycles = 4;
         break;
     }
 
@@ -1179,7 +1196,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0xF1: // POP AF POPs from Stack into Joint Reg AF
     {
-        F = memory[SP];
+        F = memory[SP] & 0xF0; // Lower Nibble (4 bits) of F Reg is always 0
         SP++;
         A = memory[SP];
         SP++;
@@ -1519,6 +1536,22 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+    case 0xD9: // RETI ... Return from interrupt handler POPs Return Adress from Stack and jumps back and enables interrupts by setting IME to true
+    {
+        uint16_t addr = 0;
+
+        addr = memory[SP];
+        SP++;
+        addr = addr | (memory[SP] << 8);
+        SP++;
+
+        PC = addr;
+        ime = true;
+
+        lastCycles = 16;
+        break;
+    }
+
         // ------------- JP ----------------
 
     case 0xC3: // JP u16 Jumps PC unconditionally to 16bit Address
@@ -1622,6 +1655,89 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     {
         PC = getHL();
         lastCycles = 4;
+        break;
+    }
+
+        // ------------- JR ----------------
+
+    case 0x18: // JR i8 Jumps PC unconditionally relatively based on signed 8bit Val
+    {
+        int8_t val = memory[PC];
+        PC++; // The Op only jumps after PC has been increased normally
+        PC = PC + val;
+        lastCycles = 12;
+        break;
+    }
+
+    case 0x28: // JR Z,i8 Jumps PC only if Z-Flag is true relatively based on signed 8bit Val
+    {
+        int8_t val = memory[PC];
+        PC++;
+
+        if (getZeroFlag() == true)
+        {
+            PC = PC + val;
+            lastCycles = 12;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+    }
+
+    case 0x38: // JR C,i8
+    {
+        int8_t val = memory[PC];
+        PC++;
+
+        if (getCarryFlag() == true)
+        {
+            PC = PC + val;
+            lastCycles = 12;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+    }
+
+    case 0x20: // JR NZ,i8
+    {
+        int8_t val = memory[PC];
+        PC++;
+
+        if (getZeroFlag() == false)
+        {
+            PC = PC + val;
+            lastCycles = 12;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+    }
+
+    case 0x30: // JR NC,i8
+    {
+        int8_t val = memory[PC];
+        PC++;
+
+        if (getCarryFlag() == false)
+        {
+            PC = PC + val;
+            lastCycles = 12;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
         break;
     }
 
@@ -1814,7 +1930,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0xF6: // OR A,u8 OR Operation with A Reg and u8 Val
     {
-        A = A | B;
+        A = A | memory[PC];
 
         setZeroFlag(A == 0);
         setSubFlag(false);
@@ -2080,14 +2196,15 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- SBC ---------------- // TOCHECK
+        // ------------- SBC ----------------
 
     case 0xDE: // SBC A,u8 Subtract with Carry (Borrow) A Reg - u8 Val
     {
-        setHalfFlag((A & 0x0F) < ((memory[PC] & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (memory[PC] + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((memory[PC] & 0x0F) + old_carry));
+        setCarryFlag(A < (memory[PC] + old_carry));
 
-        A = A - memory[PC] - getCarryFlag();
+        A = A - memory[PC] - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2101,10 +2218,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x98: // SBC A,B Subtract with Carry (Borrow)
     {
-        setHalfFlag((A & 0x0F) < ((B & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (B + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((B & 0x0F) + old_carry));
+        setCarryFlag(A < (B + old_carry));
 
-        A = A - B - getCarryFlag();
+        A = A - B - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2115,10 +2233,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x99: // SBC A,C
     {
-        setHalfFlag((A & 0x0F) < ((C & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (C + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((C & 0x0F) + old_carry));
+        setCarryFlag(A < (C + old_carry));
 
-        A = A - C - getCarryFlag();
+        A = A - C - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2129,10 +2248,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9A: // SBC A,D
     {
-        setHalfFlag((A & 0x0F) < ((D & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (D + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((D & 0x0F) + old_carry));
+        setCarryFlag(A < (D + old_carry));
 
-        A = A - D - getCarryFlag();
+        A = A - D - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2143,10 +2263,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9B: // SBC A,E
     {
-        setHalfFlag((A & 0x0F) < ((E & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (E + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((E & 0x0F) + old_carry));
+        setCarryFlag(A < (E + old_carry));
 
-        A = A - E - getCarryFlag();
+        A = A - E - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2157,8 +2278,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9C: // SBC A,H
     {
-        setHalfFlag((A & 0x0F) < ((H & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (H + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((H & 0x0F) + old_carry));
+        setCarryFlag(A < (H + old_carry));
 
         A = A - H - getCarryFlag();
 
@@ -2171,10 +2293,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9D: // SBC A,L
     {
-        setHalfFlag((A & 0x0F) < ((L & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (L + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((L & 0x0F) + old_carry));
+        setCarryFlag(A < (L + old_carry));
 
-        A = A - L - getCarryFlag();
+        A = A - L - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2185,10 +2308,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9E: // SBC A,(HL) <- Brackets: Val at addr used
     {
-        setHalfFlag((A & 0x0F) < ((memory[getHL()] & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (memory[getHL()] + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((memory[getHL()] & 0x0F) + old_carry));
+        setCarryFlag(A < (memory[getHL()] + old_carry));
 
-        A = A - memory[getHL()] - getCarryFlag();
+        A = A - memory[getHL()] - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2199,10 +2323,11 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
     case 0x9F: // SBC A,A
     {
-        setHalfFlag((A & 0x0F) < ((A & 0x0F) + getCarryFlag()));
-        setCarryFlag(A < (A + getCarryFlag()));
+        uint8_t old_carry = getCarryFlag();
+        setHalfFlag((A & 0x0F) < ((A & 0x0F) + old_carry));
+        setCarryFlag(A < (A + old_carry));
 
-        A = A - A - getCarryFlag();
+        A = A - A - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2382,7 +2507,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
     case 0xBB: // CP A,E
     {
         setZeroFlag((A - E) == 0);
-        setHalfFlag((A & 0x0F) < (B & 0x0F));
+        setHalfFlag((A & 0x0F) < (E & 0x0F));
         setCarryFlag(A < E);
         setSubFlag(true);
         lastCycles = 4;
@@ -2429,7 +2554,62 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
+        // ------------- CPL ----------------
+
+    case 0x2F: // CPL Complement accumulator Flips all Bits in A Reg and sets Sub (N) and Half Flags
+
+    {
+        A = ~A; // ~ flips all bits 0 -> 1, 1 -> 0
+        setSubFlag(true);
+        setHalfFlag(true);
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- CCF ----------------
+
+    case 0x3F: // CCF Complement carry flag Flips the carry flag, and clears the Sub (N) and H Flags
+
+    {
+        setCarryFlag(!getCarryFlag());
+        setSubFlag(false);
+        setHalfFlag(false);
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- SCF ----------------
+
+    case 0x37: // SCF Set carry flag Sets the carry flag, and clears the N and H Flags
+
+    {
+        setCarryFlag(true);
+        setSubFlag(false);
+        setHalfFlag(false);
+        lastCycles = 4;
+        break;
+    }
+
+        // ------------- CB ----------------
+
+    case 0xCB: // CB PREFIX TODOC
+
+    {
+        // This is how the Byte after CB looks: xx yyy zzz
+        // xx selects the Operation Group (00 = rotate/shift, 01 = BIT, 10 = RES, 11 = SET)
+        // yyy selects Operation in Op Group 00 (RLC, RRC, RL, RR, SLA, SRA, SWAP, SRL)
+        // zzz selects the Register
+
+        uint8_t cb_opcode = memory[PC];
+
+        uint8_t reg = cb_opcode & 0x07; // keep only the lowest 3 bits
+        uint8_t y = (cb_opcode >> 3) & 0x07; // shift the middle bits down, then keep 3 bits
+        uint8_t group = cb_opcode >> 6; // shift down to only keep the 2 highest bits
+        break;
+    }
+
     default:
+        printf("Unimplemented opcode 0x%02X at PC=0x%04X\n", opcode, PC - 1);
         lastCycles = 4; // TODO... just for testing, not real GB behaviour
         break;
     }

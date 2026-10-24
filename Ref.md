@@ -6,6 +6,7 @@ https://youtu.be/HyzD8pNlpwI
 
 ## Opcodes
 https://izik1.github.io/gbops/
+https://meganesu.github.io/generate-gb-opcodes/
 https://pastraiser.com/cpu/gameboy/gameboy_opcodes.html
 https://blog.ollien.com/posts/gb-daa/
 
