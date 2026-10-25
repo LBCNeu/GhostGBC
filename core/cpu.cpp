@@ -794,7 +794,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         lastCycles = 8;
         break;
 
-        // ------------- ADD r,r ---------------- // TOCHECK
+        // ------------- ADD r,r ----------------
 
     case 0x80: // ADD A,B Adds B Reg Val to A Reg
     {
@@ -927,7 +927,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ---------- ADD SP,i8 ---------------- TOCHECK
+        // ---------- ADD SP,i8 ----------------
 
     case 0xE8: // ADD SP,i8 / ADD SP,e8, ADD SP,r8 Adds a signed 8 bit integer to SP
     {
@@ -950,7 +950,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- SUB ---------------- // TOCHECK
+        // ------------- SUB ----------------
 
     case 0xD6: // SUB A,u8 Subtracts u8 Val from A Reg
     {
@@ -964,7 +964,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- SUB r,r ---------------- // TOCHECK
+        // ------------- SUB r,r ----------------
 
     case 0x90: // SUB A,B
     {
@@ -1055,7 +1055,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ---------- LD HL,SP+i8 ---------------- // TOCHECK
+        // ---------- LD HL,SP+i8 ----------------
 
     case 0xF8: // LD HL,SP+i8 / LD HL,SP+e8, LD HL,SP+r8 Adds a signed 8 bit integer to SP and then saves that Value into HL
     {
@@ -1807,7 +1807,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- AND ---------------- // TOCHECK
+        // ------------- AND ----------------
 
     case 0xE6: // AND A,u8 AND Operation with A Reg and u8 Val
     {
@@ -1928,7 +1928,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- OR ---------------- // TOCHECK
+        // ------------- OR ----------------
 
     case 0xF6: // OR A,u8 OR Operation with A Reg and u8 Val
     {
@@ -2049,7 +2049,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- ADC ---------------- // TOCHECK
+        // ------------- ADC ----------------
 
     case 0xCE: // ADC A,u8 Add with Carry A Reg + u8 Val
     {
@@ -2338,7 +2338,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- XOR ---------------- // TOCHECK
+        // ------------- XOR ----------------
 
     case 0xEE: // XOR A,u8 XOR Op with A Reg and u8 Val
     {
@@ -2460,7 +2460,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-        // ------------- CP ---------------- // TOCHECK
+        // ------------- CP ----------------
 
     case 0xFE: // CP A,u8 Does a A - u8 Operation but discardes the Result and just sets the Flags
     {
@@ -2657,7 +2657,7 @@ void cpu::stepCB(std::array<uint8_t, 65536> &memory) // TODOC
         case 5:                     // SRA (Shift Right Arithmetic) Shift all bits in Reg right, bit 0 (rightmost) that falls out goes into Carry Flag
             carry = (value & 0x01); // bit 0 gets masked (00000001) and put into carry
             result = (value >> 1);
-            result = result | (value & 0x80); // IMPORTANT: unlike SLA here the last bit in the chain (from the oder side of the bit that falls away) keeps it's original value before the shift and does not get reset to 0
+            result = result | (value & 0x80); // IMPORTANT: unlike SLA here the last bit in the chain, here bit 7 (from the other side of the bit that falls away), keeps it's original value from before the shift and does not get reset to 0
             break;
 
         case 6: // SWAP Lower and Higher Nibble (4 bits) get switched

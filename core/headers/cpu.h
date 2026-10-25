@@ -2,6 +2,11 @@
 #include <cstdint>
 #include <array>
 
+// TODO -> Not finished, Bug etc.
+// TODOC -> Needs Documentaion / Documenation not finished
+// TOCHECK -> Finished but uncertain if it is correct
+// Sub and Negative (N-Flag) are the same
+
 struct cpu
 {
     bool ime; // Interrupt Master Enable TODOC
