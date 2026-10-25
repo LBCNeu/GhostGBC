@@ -4,7 +4,7 @@
 
 struct cpu
 {
-    bool ime = false; // Interrupt Master Enable TODOC
+    bool ime; // Interrupt Master Enable TODOC
 
     // 8-bit Registers
     uint8_t A, F; // why in this Layout
@@ -18,6 +18,8 @@ struct cpu
 
     // Cycle Counter
     uint8_t lastCycles;
+
+    // ------------- Helper Functions ----------------
 
     // Join Registers
     uint16_t getBC() { return (B << 8) | C; } // Cobine B and C into a 16-bit Register, B gets shifted left to "high byte", result gets combined with C
@@ -47,6 +49,8 @@ struct cpu
     // H = 5
     // C = 4
     // Bits 0 to 3 of F Register are unused in Original GB Hardware
+
+    // ------------- Flag Helpers ----------------
 
     bool getZeroFlag() { return (F >> 7) & 1; } // Shifts the 7th (from right, last bit bacause we start counting at 0 to 7) Bit to the Right 1011 0000 >> 7... Now it is 0000 0001... Now we see that the 7th bis was 1. Now compare (&) that with 1 and you get 1 (true/Zero-Flag set)
     bool getSubFlag() { return (F >> 6) & 1; }
@@ -109,6 +113,64 @@ struct cpu
         }
     }
 
+    // ------------- CB Prefix Helpers ---------------- TODOC
+
+    uint8_t readReg(uint8_t reg, std::array<uint8_t, 65536> &memory)
+    {
+        switch (reg)
+        {
+        case 0:
+            return B;
+        case 1:
+            return C;
+        case 2:
+            return D;
+        case 3:
+            return E;
+        case 4:
+            return H;
+        case 5:
+            return L;
+        case 6:
+            return memory[getHL()];
+        case 7:
+            return A;
+        }
+        return A; // just so the complier is happy, never reached
+    }
+
+    void writeReg(uint8_t reg, uint8_t value, std::array<uint8_t, 65536> &memory)
+    {
+        switch (reg)
+        {
+        case 0:
+            B = value;
+            break;
+        case 1:
+            C = value;
+            break;
+        case 2:
+            D = value;
+            break;
+        case 3:
+            E = value;
+            break;
+        case 4:
+            H = value;
+            break;
+        case 5:
+            L = value;
+            break;
+        case 6:
+            memory[getHL()] = value;
+            break;
+        case 7:
+            A = value;
+            break;
+        }
+    }
+
     void reset();
     void step(std::array<uint8_t, 65536> &memory); // Descripion in cpu.cpp
+    void stepCB(std::array<uint8_t, 65536> &memory);
 };

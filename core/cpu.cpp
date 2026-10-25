@@ -8,6 +8,8 @@
 
 void cpu::reset()
 {
+    ime = false;
+
     A = 0x01;
     F = 0xB0; // Register Values of real GB DMG Harware on Power-up
     B = 0x00;
@@ -593,7 +595,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         PC++;
         memory[addr] = SP & 0xFF;                        // Low Byte of SP
         memory[(uint16_t)(addr + 1)] = (SP >> 8) & 0xFF; // High Byte of SP
-        // Edge case: When adding 1 to addr and addr is 0xFFFF the operation witll give 0x10000 wich is false, it should wrap around back to 0x0000 like real hardware, to chop off the 1 from 0x10000 (uint16_t) is used before the + operation to typecast the result back into 16bit
+        // Edge case: When adding 1 to addr and addr is 0xFFFF the operation will give 0x10000 which is false, it should wrap around back to 0x0000 like real hardware, to chop off the 1 from 0x10000 (uint16_t) is used to typecast the result back into 16bit
         lastCycles = 20;
         break;
     }
@@ -950,7 +952,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- SUB ---------------- // TOCHECK
 
-    case 0xD6: // SUB A,u8 Adds u8 Val to A Reg
+    case 0xD6: // SUB A,u8 Subtracts u8 Val from A Reg
     {
         setHalfFlag((A & 0x0F) < (memory[PC] & 0x0F));
         setCarryFlag(A < memory[PC]);
@@ -1277,7 +1279,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         break;
     }
 
-    case 0xC4: // CALL NZ,u16 Jumps Program to 16bit addr only if F-Flag is not set, saves the jumpoff location into Stack
+    case 0xC4: // CALL NZ,u16 Jumps Program to 16bit addr only if Z-Flag is not set, saves the jumpoff location into Stack
     {
         uint16_t addr = 0;
         addr = memory[PC];
@@ -1791,9 +1793,9 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- RRA ----------------
 
-    case 0x1F: // RRA Rotate Right Accumulator (A Reg)... Shifts A Reg right by 1 and then takes the Carry-Flag bit and put is back on the left, the bit on the right that falls out gets put into the carry flag
+    case 0x1F: // RRA Rotate Right Accumulator (A Reg)... Shifts A Reg right by 1 and then takes the Carry-Flag bit and puts it back on the left, the bit on the right that falls out gets put into the carry flag
     {
-        uint8_t carry = (A & 0x01);           // Do not shift like RRCA or RLA because it becomes 0x10000000 and that is not the correct value for setCarryFlag() (should be 1 = true)
+        uint8_t carry = (A & 0x01);
         A = (A >> 1) | (getCarryFlag() << 7); // Unlike RRCA carry is only needed for setCarryFlag() and not merged with A again, instead getCarryFlag()'s Value needs to be shifted to the left (just in this Operation not in general) to be merged correctly
 
         setZeroFlag(false);
@@ -2282,7 +2284,7 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         setHalfFlag((A & 0x0F) < ((H & 0x0F) + old_carry));
         setCarryFlag(A < (H + old_carry));
 
-        A = A - H - getCarryFlag();
+        A = A - H - old_carry;
 
         setZeroFlag(A == 0);
         setSubFlag(true);
@@ -2557,7 +2559,6 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         // ------------- CPL ----------------
 
     case 0x2F: // CPL Complement accumulator Flips all Bits in A Reg and sets Sub (N) and Half Flags
-
     {
         A = ~A; // ~ flips all bits 0 -> 1, 1 -> 0
         setSubFlag(true);
@@ -2569,7 +2570,6 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         // ------------- CCF ----------------
 
     case 0x3F: // CCF Complement carry flag Flips the carry flag, and clears the Sub (N) and H Flags
-
     {
         setCarryFlag(!getCarryFlag());
         setSubFlag(false);
@@ -2581,7 +2581,6 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
         // ------------- SCF ----------------
 
     case 0x37: // SCF Set carry flag Sets the carry flag, and clears the N and H Flags
-
     {
         setCarryFlag(true);
         setSubFlag(false);
@@ -2592,24 +2591,159 @@ void cpu::step(std::array<uint8_t, 65536> &memory) // using std::array instead o
 
         // ------------- CB ----------------
 
-    case 0xCB: // CB PREFIX TODOC
-
+    case 0xCB: // CB PREFIX
     {
-        // This is how the Byte after CB looks: xx yyy zzz
-        // xx selects the Operation Group (00 = rotate/shift, 01 = BIT, 10 = RES, 11 = SET)
-        // yyy selects Operation in Op Group 00 (RLC, RRC, RL, RR, SLA, SRA, SWAP, SRL)
-        // zzz selects the Register
-
-        uint8_t cb_opcode = memory[PC];
-
-        uint8_t reg = cb_opcode & 0x07; // keep only the lowest 3 bits
-        uint8_t y = (cb_opcode >> 3) & 0x07; // shift the middle bits down, then keep 3 bits
-        uint8_t group = cb_opcode >> 6; // shift down to only keep the 2 highest bits
+        stepCB(memory);
         break;
     }
 
     default:
         printf("Unimplemented opcode 0x%02X at PC=0x%04X\n", opcode, PC - 1);
+        lastCycles = 4; // TODO... just for testing, not real GB behaviour
+        break;
+    }
+}
+
+void cpu::stepCB(std::array<uint8_t, 65536> &memory) // TODOC
+{
+    // This is how the Byte after CB looks: xx yyy zzz
+    // xx (group) selects the Operation Group (0 (00) = rotate/shift, 1 (01) = BIT, 2 (10) = RES, 3 (11) = SET)
+    // yyy (selection) selects Operation in Op Group 0 (RLC, RRC, RL, RR, SLA, SRA, SWAP, SRL) or selects the wanted bit of the Register during the BIT, RES or SET Operations
+    // zzz (reg) selects the Register
+
+    uint8_t cb_opcode = memory[PC];
+    PC++; // unlike shorter Operation I am increasing PC now so I don't forget it later
+
+    uint8_t reg = cb_opcode & 0x07;              // keep only the lowest 3 bits
+    uint8_t selection = (cb_opcode >> 3) & 0x07; // shift the middle bits down, then keep 3 bits
+    uint8_t group = cb_opcode >> 6;              // shift down to only keep the 2 highest bits
+
+    uint8_t value = readReg(reg, memory);
+
+    switch (group)
+    {
+    case 0: // rotate/shift
+    {
+        uint8_t result = 0;
+        uint8_t carry = 0;
+
+        switch (selection)
+        {
+        case 0: // RLC (like RLCA 0x07)
+            carry = (value & 0x80) >> 7;
+            result = (value << 1) | carry;
+            break;
+
+        case 1: // RRC (like RRCA 0x0F)
+            carry = (value & 0x01);
+            result = (value >> 1) | (carry << 7);
+            break;
+
+        case 2: // RL (like RLA 0x17)
+            carry = (value & 0x80) >> 7;
+            result = (value << 1) | getCarryFlag();
+            break;
+
+        case 3: // RR (like RRA 0x1F)
+            carry = (value & 0x01);
+            result = (value >> 1) | (getCarryFlag() << 7);
+            break;
+
+        case 4:                     // SLA (Shift Left Arithmetic) Shift all bits in Reg left, bit 7 (leftmost) that falls out goes into Carry Flag and bit 0 (rightmost) gets filled with 0
+            carry = (value & 0x80) >> 7; // 7th bit gets masked (10000000), shifted to the right (00000001) and put into carry
+            result = (value << 1); // By shifting value 1 to the left, the rightmost bit (bit 0) automatically turns 0 (reset)
+            break;
+
+        case 5:                     // SRA (Shift Right Arithmetic) Shift all bits in Reg right, bit 0 (rightmost) that falls out goes into Carry Flag
+            carry = (value & 0x01); // bit 0 gets masked (00000001) and put into carry
+            result = (value >> 1);
+            result = result | (value & 0x80); // IMPORTANT: unlike SLA here the last bit in the chain (from the oder side of the bit that falls away) keeps it's original value before the shift and does not get reset to 0
+            break;
+
+        case 6: // SWAP Lower and Higher Nibble (4 bits) get switched
+            result = ((value & 0x0F) << 4) | ((value & 0xF0) >> 4);
+            carry = 0; // Per definition during SWAP carry must be cleared
+            break;
+
+        case 7:                             // SRL  (Shift Right Logical) Reverse verion or SLA
+            carry = (value & 0x01);         // 0 bit gets masked (00000001) and put into carry
+            result = (value >> 1); // IMPORTANT: unlike SRA here the 7th bit (left) gets reset to 0
+            break;
+
+            // Logically you would think that SRA is the reverse version of SLA but that is not true, SRL is the reverse version or SLA
+            // SRA has a slight diffrence in how it handles the leftmost bit
+        }
+
+        setZeroFlag(result == 0); // unlike RLCA, Z is calculated normally here
+        setSubFlag(false);
+        setHalfFlag(false);
+        setCarryFlag(carry);
+
+        writeReg(reg, result, memory);
+
+        if (reg == 6)
+        {
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+    }
+
+    case 1:                                          // BIT selection,reg Looks at the selected bit (indicated by selection val) in selected Register, negates it (complement) and writes that into the zero flag
+        setZeroFlag(!((value >> selection) & 0x01)); // This line isolates the selected bit and moves it all the way to the rightmost bit
+        setSubFlag(false);
+        setHalfFlag(true);
+        // Carry is unmodiefied
+
+        if (reg == 6)
+        {
+            lastCycles = 12;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+
+    case 2:                                                  // RES selection,reg Clears selected bit in selected Register
+        writeReg(reg, value & ~(0x01 << selection), memory); // This line creates a (00000001) mask , moves the 1 by the amout of the selction (eg. 3) to the left to select the correct bit
+        // then inverts the mask with ~ -> (11110111) and then uses the & (AND) Operator to clear the selected bit 3 (11011001) & (11110111) -> (11010001)
+        // (11011001) is an example Value inside the selected Register
+
+        if (reg == 6)
+        {
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+
+    case 3:                                                 // SET selection,reg Sets selected bit in selected Register
+        writeReg(reg, value | (0x01 << selection), memory); // This line creates a (00000001) mask , moves the 1 by the amout of the selction (eg. 3) to the left to select the correct bit
+        // unlike RES, SET does not invert and use & but uses the | (OR) Operator to merge the selected bit 3 with the Value in the Register (11010001) | (00001000) -> (11011001)
+        // (11011001) is an example Value inside the selected Register
+
+        if (reg == 6)
+        {
+            lastCycles = 16;
+        }
+        else
+        {
+            lastCycles = 8;
+        }
+
+        break;
+
+    default:
+        printf("Unimplemented opcode 0xCB%02X at PC=0x%04X\n", cb_opcode, PC - 2);
         lastCycles = 4; // TODO... just for testing, not real GB behaviour
         break;
     }
