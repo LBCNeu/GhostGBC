@@ -34,3 +34,8 @@ https://gbdev.io/pandocs/Power_Up_Sequence.html
 
 ## Z80 / Intel 8080 info
 https://z80-heaven.wikidot.com/
+
+# Hardware:
+
+## William Durand's KiCad Libraries
+https://github.com/willdurand/kicad-libs

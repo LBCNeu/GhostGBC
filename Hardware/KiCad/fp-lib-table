@@ -1,5 +1,5 @@
 (fp_lib_table
-  (version 7)
-  (lib (name "JLCImport")(type "KiCad")(uri "${KIPRJMOD}/JLCImport.pretty")(options "")(descr ""))
+	(version 7)
 	(lib (name "lcsc_footprints") (type "KiCad") (uri "${KIPRJMOD}/libs/lcsc/footprints.pretty") (options "") (descr "LCSC Manager imported footprints"))
+	(lib (name "willdurand_connector") (type "KiCad") (uri "${KIPRJMOD}/libs/willdurand/willdurand_connector.pretty") (options "") (descr ""))
 )
