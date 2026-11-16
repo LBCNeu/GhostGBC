@@ -2472,7 +2472,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Frage wegen Datasheet S.45 Thermal Vias"
+	(text "Datasheet S.45 Thermal Vias"
 		(exclude_from_sim no)
 		(at 118.872 26.924 0)
 		(effects
