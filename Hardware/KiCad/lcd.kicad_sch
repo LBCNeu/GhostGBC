@@ -3499,6 +3499,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "Debug leds\n"
+		(exclude_from_sim no)
+		(at 205.994 24.892 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "075b0ef8-e09e-44da-873d-97b31e134ae3")
+	)
 	(text "Pin Numbers are reversed forom LCD Datasheet"
 		(exclude_from_sim no)
 		(at 250.698 66.0399 90)
