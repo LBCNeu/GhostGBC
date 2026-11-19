@@ -172,7 +172,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -184,7 +183,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -196,7 +194,6 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
-          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -816,7 +813,7 @@
         "uuid": "a0d649e1-1155-47a6-9c2b-760e636116c2"
       }
     ],
-    "used_designators": "R1-64,#FLG1-8,BOOT1,#PWR1-108,RT1,D1-12,C1-30,CT1,CN1,Card1,START1-2,FPC1,J1-2,L1,LED1,LS1,PWRSW1,U1-12,Q1-6,RESET1-3,SELECT1-2,SW1-2,SW_A2,SW_B2-4,TP1-2,USB1",
+    "used_designators": "BOOT1,R1-64,#FLG1-8,RT1,D1-12,#PWR1-108,CT1,C1-30,CN1,START1-2,Card1,FPC1,J1-2,L1,LED1,LS1,U1-12,PWRSW1,Q1-6,RESET1-3,SELECT1-2,SW1-2,SW_A2,SW_B2-4,TP1-6,USB1",
     "variants": []
   },
   "sheets": [
