@@ -3171,6 +3171,187 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "lcsc_imported:PESD5V0S1BA"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "PESD5V0S1BA"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "lcsc_footprints:C19224_SOD-323_L1_7-W1_3-LS2_5-BI"
+				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241027_Nexperia-PESD5V0S1BA-115_C19224.pdf"
+				(at -2.286 0.127 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "PESD5V0S1BA"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C19224"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "Nexperia(安世)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "PESD5V0S1BA_1_1"
+				(polyline
+					(pts
+						(xy -3.81 -1.27) (xy -3.81 1.27) (xy -3.048 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy -3.81 0) (xy -1.27 -1.27) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 3.81 0) (xy 1.27 -1.27) (xy 1.27 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 1.27) (xy 3.81 -1.27) (xy 3.048 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin unspecified line
+					(at -6.35 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 6.35 0 180)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1 1)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "lcsc_imported:SK12D07VG4"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -4578,7 +4759,7 @@
 		(uuid "fc8ae57f-be42-4b8f-aacd-d7587d30b73c")
 	)
 	(junction
-		(at 58.42 30.48)
+		(at 60.96 30.48)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "02e9e7a6-68db-40ff-90ea-061736c3ab63")
@@ -4594,6 +4775,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "09979ac4-ca01-454a-a698-ded87025b3fa")
+	)
+	(junction
+		(at 71.12 30.48)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "0dd42193-14e7-4060-a65c-735ab2613237")
 	)
 	(junction
 		(at 213.36 80.01)
@@ -5527,7 +5714,7 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 26.67) (xy 67.31 30.48)
+			(xy 71.12 26.67) (xy 71.12 30.48)
 		)
 		(stroke
 			(width 0)
@@ -5724,6 +5911,16 @@
 			(type default)
 		)
 		(uuid "45e682c2-8f39-4108-be27-41f9a027e084")
+	)
+	(wire
+		(pts
+			(xy 39.37 82.55) (xy 33.02 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47472542-f467-4612-916b-3489b2d0af46")
 	)
 	(wire
 		(pts
@@ -6104,16 +6301,6 @@
 			(type default)
 		)
 		(uuid "6f01ac9b-5331-40f4-837e-ae2f476c30bd")
-	)
-	(wire
-		(pts
-			(xy 67.31 30.48) (xy 58.42 30.48)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7497b89a-4c6c-4885-98cf-fe85989a8003")
 	)
 	(wire
 		(pts
@@ -6657,6 +6844,16 @@
 	)
 	(wire
 		(pts
+			(xy 39.37 85.09) (xy 39.37 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "acad966c-ddd0-4cba-bfa8-78f35332af43")
+	)
+	(wire
+		(pts
 			(xy 137.16 35.56) (xy 147.32 35.56)
 		)
 		(stroke
@@ -6754,6 +6951,16 @@
 			(type default)
 		)
 		(uuid "bc69d548-e2c1-4bda-aae5-632b8b041d6f")
+	)
+	(wire
+		(pts
+			(xy 81.28 43.18) (xy 81.28 44.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bc98c23e-9bbf-45b9-8d5e-fc5497b63cd3")
 	)
 	(wire
 		(pts
@@ -6957,7 +7164,7 @@
 	)
 	(wire
 		(pts
-			(xy 58.42 25.4) (xy 58.42 30.48)
+			(xy 60.96 25.4) (xy 60.96 30.48)
 		)
 		(stroke
 			(width 0)
@@ -7147,7 +7354,7 @@
 	)
 	(wire
 		(pts
-			(xy 58.42 30.48) (xy 48.26 30.48)
+			(xy 48.26 30.48) (xy 81.28 30.48)
 		)
 		(stroke
 			(width 0)
@@ -9031,7 +9238,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 67.31 26.67 0)
+		(at 39.37 85.09 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -9040,31 +9247,31 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "2919214f-775f-4351-8be2-2bcd98d0423b")
-		(property "Reference" "TP3"
-			(at 69.85 22.0979 0)
+		(uuid "21ad6e8d-e42b-46e1-9e27-f4bf1cd604e4")
+		(property "Reference" "TP10"
+			(at 41.91 87.1219 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 69.85 24.6379 0)
+			(at 41.91 89.6619 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Loop_D3.80mm_Drill2.0mm"
-			(at 72.39 26.67 0)
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9075,7 +9282,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 72.39 26.67 0)
+			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9086,7 +9293,86 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 67.31 26.67 0)
+			(at 39.37 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "eaa44727-88c7-409b-ade7-9031899d935e")
+		)
+		(instances
+			(project "GhostGBC"
+				(path "/25fd8bf6-2789-4947-b5ef-36e26d6b9dfb"
+					(reference "TP10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 71.12 26.67 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2919214f-775f-4351-8be2-2bcd98d0423b")
+		(property "Reference" "TP3"
+			(at 73.66 22.0979 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 73.66 24.6379 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Loop_D3.80mm_Drill2.0mm"
+			(at 76.2 26.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 76.2 26.67 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 71.12 26.67 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10464,6 +10750,83 @@
 			(project "GhostGBC"
 				(path "/25fd8bf6-2789-4947-b5ef-36e26d6b9dfb"
 					(reference "D2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 81.28 44.45 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "44023e0a-aee1-4435-b5f3-e2f86e4f9361")
+		(property "Reference" "#PWR047"
+			(at 81.28 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 84.836 46.482 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 81.28 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 81.28 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 81.28 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c1b0bcda-f9b9-49e9-8996-4aa0f2f446c7")
+		)
+		(instances
+			(project "GhostGBC"
+				(path "/25fd8bf6-2789-4947-b5ef-36e26d6b9dfb"
+					(reference "#PWR047")
 					(unit 1)
 				)
 			)
@@ -14784,6 +15147,110 @@
 		)
 	)
 	(symbol
+		(lib_id "lcsc_imported:PESD5V0S1BA")
+		(at 81.28 36.83 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "da1588e5-d057-4422-b157-d945c8395288")
+		(property "Reference" "D6"
+			(at 83.82 35.5599 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "PESD5V0S1BA"
+			(at 83.82 38.0999 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "lcsc_footprints:C19224_SOD-323_L1_7-W1_3-LS2_5-BI"
+			(at 71.12 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241027_Nexperia-PESD5V0S1BA-115_C19224.pdf"
+			(at 81.407 34.544 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "PESD5V0S1BA"
+			(at 81.28 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C19224"
+			(at 81.28 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Nexperia(安世)"
+			(at 81.28 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "f14c6e33-257d-4cbd-9ee3-52a4b04edd82")
+		)
+		(pin "2"
+			(uuid "64729c4e-54fe-495d-9550-b7e87b70ecfd")
+		)
+		(instances
+			(project "GhostGBC"
+				(path "/25fd8bf6-2789-4947-b5ef-36e26d6b9dfb"
+					(reference "D6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:LED")
 		(at 152.4 115.57 90)
 		(unit 1)
@@ -15381,7 +15848,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 58.42 25.4 0)
+		(at 60.96 25.4 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -15392,7 +15859,7 @@
 		(fields_autoplaced yes)
 		(uuid "ef86a6ae-cd9c-42f6-a53b-3622c4279620")
 		(property "Reference" "#FLG01"
-			(at 58.42 23.495 0)
+			(at 60.96 23.495 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15403,7 +15870,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 58.42 20.32 0)
+			(at 60.96 20.32 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -15413,7 +15880,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 58.42 25.4 0)
+			(at 60.96 25.4 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15424,7 +15891,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 58.42 25.4 0)
+			(at 60.96 25.4 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15435,7 +15902,7 @@
 			)
 		)
 		(property "Description" "Special symbol for telling ERC where power comes from"
-			(at 58.42 25.4 0)
+			(at 60.96 25.4 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
