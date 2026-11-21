@@ -12,129 +12,6 @@
 		(comment 3 "Custom PCB for simple GBC emulator project running on custom ESP32-S3 hardware.")
 	)
 	(lib_symbols
-		(symbol "Connector:TestPoint"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.762)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "TP"
-				(at 0 6.858 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "TestPoint"
-				(at 0 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 5.08 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 5.08 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "test point"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "test point tp"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "Pin* Test*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "TestPoint_0_1"
-				(circle
-					(center 0 3.302)
-					(radius 0.762)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "TestPoint_1_1"
-				(pin passive line
-					(at 0 0 90)
-					(length 2.54)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -4575,17 +4452,21 @@
 		)
 		(uuid "bae8ced1-c65c-430e-8615-456b9d584b2f")
 	)
+	(text "R27,R28,R29 values depend backlight LEDs"
+		(exclude_from_sim no)
+		(at 209.55 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "d727bf3b-00ab-4428-bcfd-56b8b071e3ad")
+	)
 	(junction
 		(at 232.41 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "03419d44-18f1-43af-9586-072cbcee233b")
-	)
-	(junction
-		(at 125.73 175.26)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0750a2ae-4db6-4dc4-8f3c-98e6f1f4b97b")
 	)
 	(junction
 		(at 67.31 49.53)
@@ -5905,16 +5786,6 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 175.26) (xy 125.73 176.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5fd0ca60-4978-4a0f-906a-9a73aa137089")
-	)
-	(wire
-		(pts
 			(xy 118.11 105.41) (xy 118.11 93.98)
 		)
 		(stroke
@@ -6205,7 +6076,7 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 168.91) (xy 125.73 175.26)
+			(xy 125.73 168.91) (xy 125.73 176.53)
 		)
 		(stroke
 			(width 0)
@@ -6972,16 +6843,6 @@
 			(type default)
 		)
 		(uuid "c8372b38-3499-483a-986a-a3d3924a070c")
-	)
-	(wire
-		(pts
-			(xy 125.73 175.26) (xy 132.08 175.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ca4711ed-bc3c-4615-9780-9ce6ce578e60")
 	)
 	(wire
 		(pts
@@ -8377,7 +8238,7 @@
 				)
 			)
 		)
-		(property "Value" "15Ω"
+		(property "Value" "82Ω"
 			(at 228.092 129.794 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11723,7 +11584,7 @@
 				)
 			)
 		)
-		(property "Value" "15Ω"
+		(property "Value" "82Ω"
 			(at 228.092 132.334 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12694,7 +12555,7 @@
 				)
 			)
 		)
-		(property "Value" "15Ω"
+		(property "Value" "82Ω"
 			(at 228.092 127.254 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12824,85 +12685,6 @@
 			(project "GhostGBC"
 				(path "/a0d649e1-1155-47a6-9c2b-760e636116c2"
 					(reference "#PWR0109")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 132.08 175.26 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d61a56bb-88a9-405e-87f7-9730b5870647")
-		(property "Reference" "TP12"
-			(at 134.62 177.2919 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "TestPoint"
-			(at 134.62 179.8319 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.80mm_Drill2.0mm"
-			(at 127 175.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 127 175.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 132.08 175.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "09d0f12d-9a66-46bb-ad8f-4554c841f5d2")
-		)
-		(instances
-			(project "GhostGBC"
-				(path "/a0d649e1-1155-47a6-9c2b-760e636116c2"
-					(reference "TP12")
 					(unit 1)
 				)
 			)
