@@ -8129,7 +8129,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 119.38 100.33 0)
 			(hide yes)
 			(show_name no)
@@ -9242,7 +9242,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "21ad6e8d-e42b-46e1-9e27-f4bf1cd604e4")
-		(property "Reference" "TP10"
+		(property "Reference" "TP4"
 			(at 41.91 87.1219 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9264,7 +9264,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 34.29 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -9303,7 +9303,7 @@
 		(instances
 			(project "GhostGBC"
 				(path "/25fd8bf6-2789-4947-b5ef-36e26d6b9dfb"
-					(reference "TP10")
+					(reference "TP4")
 					(unit 1)
 				)
 			)
@@ -9343,7 +9343,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 76.2 26.67 0)
 			(hide yes)
 			(show_name no)
@@ -11368,7 +11368,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 184.15 100.33 0)
 			(hide yes)
 			(show_name no)
@@ -13154,7 +13154,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 176.53 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -13530,7 +13530,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 270.51 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -14670,7 +14670,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 261.62 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -16029,7 +16029,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Loop_D3.50mm_Drill1.4mm_Beaded"
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm"
 			(at 270.51 58.42 0)
 			(hide yes)
 			(show_name no)
