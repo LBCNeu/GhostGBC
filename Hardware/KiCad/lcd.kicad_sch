@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "GhostGBC")
-		(company "Marx Lukas lbcn.eu")
+		(company "Marx Lukas")
 		(comment 1 "3D models are from snapeda.com, TE.com, LCSC.com and KiCad standard libraries")
 		(comment 2 "https://github.com/lbcneu/GhostGBC")
 		(comment 3 "Custom PCB for simple GBC emulator project running on custom ESP32-S3 hardware.")
@@ -8551,7 +8551,6 @@
 		(uuid "0d70c769-188f-46e8-bb13-55bbc740ac28")
 		(property "Reference" "U13"
 			(at 163.83 20.066 0)
-			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
