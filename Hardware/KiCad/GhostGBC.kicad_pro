@@ -1510,7 +1510,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "",
-      "plot": "C:/Users/Lukas/Downloads/Gerber/",
+      "plot": "../Gerber/",
       "specctra_dsn": "",
       "step": "",
       "vrml": ""
